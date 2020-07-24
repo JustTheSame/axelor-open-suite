@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+	
+	<grid name="training-register-grid" title="Training registers" model="com.axelor.apps.talent.db.TrainingRegister">
+		<field name="training" />
+		<field name="trainingSession" />
+		<field name="employee" />
+		<field name="fromDate" />
+		<field name="toDate" />
+		<field name="statusSelect" />
+		<field name="ratingSelect" widget="SelectProgress"/>
+	</grid>
+	
+	<form name="training-register-form" title="Training register" model="com.axelor.apps.talent.db.TrainingRegister" width="large" 
+		onNew="action-training-register-default" onSave="action-group-training-register-save-click">
+		<panel name="statusPanel" title="Status">
+			<field name="statusSelect" widget="NavSelect" readonly="true" colSpan="12" showTitle="false"/>
+		</panel>
+		<panel name="detailPanel">
+			<field name="training" />
+			<field name="trainingSession" onChange="action-training-session-change" onSelect="action-training-register-training-session-domain"/>
+			<field name="employee" />
+			<spacer name="employeeSpacer"/>
+			<field name="fromDate" />
+			<field name="toDate" />
+		</panel>
+		<panel name="actionPanel" itemSpan="12" sidebar="true">
+			<button name="planBtn" title="Accept/plan" showIf="statusSelect == 0" onClick="save,action-training-register-method-plan"/>
+			<button name="completeBtn" title="Training completed" showIf="statusSelect == 1" onClick="save,action-training-register-method-complete"/>
+			<button name="cancelBtn" title="Cancel" onClick="save,action-training-register-method-cancel"/>
+			<field name="ratingSelect" widget="SelectProgress"/>
+			<field name="calendar"/>
+		</panel>
+	</form>
+	
+	<calendar name="training-register-calendar" model="com.axelor.apps.talent.db.TrainingRegister" eventStart="fromDate" eventStop="toDate" title="Training register" colorBy="statusSelect">
+		<field name="training"/>
+		<field name="statusSelect"/>
+		<field name="ratingSelect" />
+	</calendar>
+	
+	<action-record name="action-training-session-change" model="com.axelor.apps.talent.db.TrainingRegister">
+		<field name="training" expr="eval:trainingSession.training" if="training == null"/>
+		<field name="fromDate" expr="eval:trainingSession?.fromDate" if="trainingSession != null"/>
+		<field name="toDate" expr="eval:trainingSession?.toDate" if="trainingSession != null"/>
+	</action-record>
+	
+	<action-record name="action-training-register-default" model="com.axelor.apps.talent.db.TrainingRegister">
+		<field name="training" expr="eval:_training" />
+		<field name="employee" expr="eval:__user__.employee" />
+		<field name="trainingSession" expr="eval:_trainingSession" />
+		<field name="fromDate" expr="eval:_fromDate"/>
+		<field name="toDate" expr="eval:_toDate"/>
+	</action-record>
+	
+	<action-attrs name="action-training-register-training-session-domain">
+		<attribute name="domain" for="trainingSession" expr="eval:&quot;self.training.id = ${training.id}&quot;" if="training != null"/>
+		<attribute name="domain" for="trainingSession" expr="eval:null" if="training == null"/>
+	</action-attrs>
+	
+	<action-method name="action-training-register-method-plan">
+		<call class="com.axelor.apps.talent.web.TrainingRegisterController" method="plan"/>
+	</action-method>
+	
+	<action-method name="action-training-register-method-update-event-calendar">
+		<call class="com.axelor.apps.talent.web.TrainingRegisterController" method="updateEventCalendar"/>
+	</action-method>
+	
+	<action-method name="action-training-register-method-complete">
+		<call class="com.axelor.apps.talent.web.TrainingRegisterController" method="complete"/>
+	</action-method>
+	
+	<action-method name="action-training-register-method-cancel">
+		<call class="com.axelor.apps.talent.web.TrainingRegisterController" method="cancel"/>
+	</action-method>
+	
+	<action-method name="action-training-register-update-old-rating">
+		<call class="com.axelor.apps.talent.web.TrainingRegisterController" method="updateOldRating"/>
+	</action-method>
+	
+	<search-filters name="my-training-register-fitlers" model="com.axelor.apps.talent.db.Appraisal" title="My traning filters">
+		<filter title="My upcoming trainings">
+			<domain>self.employee.id = :_employeeId and self.statusSelect = 1</domain>
+		</filter>
+		<filter title="My completed trainings">
+			<domain>self.employee.id = :_employeeId and self.statusSelect = 2</domain>
+		</filter>
+		<filter title="Upcoming trainings of all employees of a team">
+			<domain>self.employee.id in :_employeeList and self.statusSelect = 1</domain>
+		</filter>
+		<filter title="Completed trainings of all employees of a team">
+			<domain>self.employee.id in :_employeeList and self.statusSelect = 2</domain>
+		</filter>
+	</search-filters>
+
+	<action-group name="action-group-training-register-save-click">
+  		<action name="action-training-register-update-old-rating"/>
+  		<action if="__this__.calendar != null &amp;&amp; __this__.calendar != __self__?.calendar" name="action-training-register-method-update-event-calendar"/>
+	</action-group>
+
+</object-views>

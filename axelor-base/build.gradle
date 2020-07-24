@@ -1,0 +1,31 @@
+apply plugin: "com.axelor.app-module"
+
+apply from: "../version.gradle"
+
+apply {
+	version = openSuiteVersion
+}
+
+axelor {
+	title "Axelor Base"
+	description "Axelor Base Module"
+}
+
+dependencies {
+    compile project(":modules:axelor-admin")
+	compile project(":modules:axelor-message")
+	compile "org.apache.commons:commons-lang3:3.2"
+	compile "org.apache.commons:commons-math3:3.6.1"
+	compile "commons-validator:commons-validator:1.4.0"
+	compile "org.mnode.ical4j:ical4j:2.2.0"
+	compile "org.mnode.ical4j:ical4j-extensions:1.0.3"
+	compile "org.mnode.ical4j:ical4j-connector:1.0.1"
+	compile "com.google.zxing:core:3.3.2"
+	compile 'org.iban4j:iban4j:3.2.1'
+	compile 'com.itextpdf:itextpdf:5.5.13.1'
+	compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+	compile ('com.google.apis:google-api-services-people:v1-rev277-1.23.0') {
+        	transitive = false
+	}
+
+}

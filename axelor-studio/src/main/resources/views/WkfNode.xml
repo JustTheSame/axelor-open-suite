@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+  
+  <grid name="wkf-node-grid" title="Node" model="com.axelor.studio.db.WkfNode" canMove="true" orderBy="sequence">
+       <field name="name"/>
+       <field name="title"/>
+       <field name="sequence" hidden="true" />
+  </grid>
+    
+  <form name="wkf-node-form" title="Node" model="com.axelor.studio.db.WkfNode" width="large">
+      <panel name="overviewPanel" title="Overview">
+        <field name="name" readonly="true"/>
+        <field name="title"/>
+        <field name="nodeType" readonly="true" widget="RadioSelect" />
+        <field name="sequence"/>
+      </panel>
+      <panel-related name="metaActionSetPanel" field="metaActionSet" colSpan="12" orderBy="sequence" canMove="true"/>
+      <panel-related name="roleSetPanel" field="roleSet" colSpan="12" />
+      <panel-related name="incomingPanel" field="incoming" colSpan="12" readonly="true" />
+      <panel-related name="outgoingPanel" field="outgoing" colSpan="12"  readonly="true" />
+  </form>
+  
+</object-views>
